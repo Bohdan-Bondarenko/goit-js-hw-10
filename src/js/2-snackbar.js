@@ -1,36 +1,33 @@
-import iziToast from 'izitoast';
-import 'izitoast/dist/css/iziToast.min.css';
+import iziToast from "izitoast";
 
-function createPromise(delay, state) {
-  return new Promise((resolve, reject) => {
-    if (state === 'fulfilled') {
-      setTimeout(() => resolve(delay), delay);
-    } else {
-      setTimeout(() => reject(delay), delay);
-    }
-  });
-}
-
-const form = document.querySelector('.form');
-form.addEventListener('submit', function (event) {
+document.querySelector(".form").addEventListener("submit", function (event) {
   event.preventDefault();
 
   const delay = parseInt(this.elements.delay.value);
   const state = this.elements.state.value;
 
-  createPromise(delay, state)
-    .then(result => {
+  const createPromise = new Promise((resolve, reject) => {
+    setTimeout(() => {
+      if (state === "fulfilled") {
+        resolve(delay);
+      } else {
+        reject(delay);
+      }
+    }, delay);
+  });
+
+  createPromise
+    .then((delay) => {
       iziToast.success({
-        title: 'Fulfilled',
-        message: `✅ Fulfilled promise in ${result}ms`,
-        position: 'topRight',
+        title: "Fulfilled promise",
+        message: `✅ Fulfilled promise in ${delay}ms`,
       });
     })
-    .catch(result => {
+    .catch((delay) => {
       iziToast.error({
-        title: 'Rejected',
-        message: `❌ Rejected promise in ${result}ms`,
-        position: 'topRight',
+        title: "Rejected promise",
+        message: `❌ Rejected promise in ${delay}ms`,
       });
     });
+  event.target.reset();
 });
